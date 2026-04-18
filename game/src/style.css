@@ -1,0 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700&display=swap');
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  overflow: hidden;
+  background: #000;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+}
+
+#app { width: 100vw; height: 100vh; position: relative; }
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+/* ─── Crosshair ─── */
+#crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  transition: transform 0.1s ease;
+}
+#crosshair.active { transform: translate(-50%,-50%) scale(1.4); }
+
+.ch-h {
+  position: absolute;
+  width: 14px; height: 2px;
+  background: rgba(255,255,255,0.9);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+.ch-v {
+  position: absolute;
+  width: 2px; height: 14px;
+  background: rgba(255,255,255,0.9);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+/* ─── Interaction Hint ─── */
+#hint-bar {
+  position: absolute;
+  top: 38%; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  padding: 7px 20px 8px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.1rem;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#hint-bar.visible { opacity: 1; }
+
+/* ─── Hotbar (Stardew-style) ─── */
+#hud-inventory {
+  position: absolute;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(80, 50, 20, 0.88);
+  border: 3px solid #a0783c;
+  border-radius: 6px;
+  box-shadow: 0 4px 0 #5a3a10, inset 0 1px 0 rgba(255,220,130,0.2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  z-index: 10;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 0.9rem;
+  max-width: 90vw;
+  overflow-x: auto;
+}
+
+#hud-inventory #hud-label {
+  color: #ffe08a;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  padding-left: 4px;
+}
+
+.hud-pill {
+  background: rgba(0,0,0,0.35);
+  border: 2px solid #a0783c;
+  border-radius: 4px;
+  color: #fff8dc;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  animation: popIn 0.2s ease;
+}
+@keyframes popIn { from { transform: scale(0.6); opacity:0;} to { transform:scale(1); opacity:1;} }
+
+/* ─── Start Screen ─── */
+#start-screen {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, #5b9dd9 0%, #87ceeb 55%, #6abf50 55%, #4a8c30 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: opacity 0.5s ease;
+}
+#start-screen.hidden { opacity: 0; pointer-events: none; }
+
+.start-inner {
+  text-align: center;
+  max-width: 560px;
+  padding: 50px 44px 44px;
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
+  background: rgba(80, 50, 18, 0.9);
+  border: 4px solid #c8943c;
+  border-radius: 6px;
+  box-shadow: 0 6px 0 #5a3a10, 0 0 0 2px rgba(255,220,130,0.1) inset;
+}
+
+.start-logo {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 2.8rem;
+  color: #ffe08a;
+  text-shadow: 3px 3px 0 #5a3a10, 0 0 30px rgba(255,200,80,0.3);
+  line-height: 1.3;
+}
+
+.start-sub {
+  color: #d4b87a;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1rem;
+  line-height: 1.9;
+  max-width: 420px;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.ctrl {
+  background: rgba(0,0,0,0.25);
+  border: 2px solid #7a5828;
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #cca86a;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 0.9rem;
+}
+
+kbd {
+  background: #2a1a08;
+  border: 2px solid #7a5828;
+  border-radius: 3px;
+  color: #ffe08a;
+  padding: 3px 9px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+#start-btn {
+  background: #6abf50;
+  color: #1a3a0a;
+  border: 3px solid #4a8c30;
+  border-radius: 4px;
+  padding: 14px 50px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.15rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2d5c18;
+  transition: all 0.1s ease;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+#start-btn:hover {
+  background: #7dd660;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #2d5c18;
+}
+#start-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #2d5c18;
+}
+
+/* ─── Dialog (Stardew Valley style) ─── */
+#dialog-overlay {
+  position: absolute; inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 80px;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+#dialog-overlay.open { opacity: 1; pointer-events: all; }
+
+#dialog-box {
+  position: relative;
+  width: 92%;
+  max-width: 860px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: rgb(61, 37, 14);
+  border: 4px solid #c8943c;
+  border-radius: 8px;
+  padding: 28px 36px 32px;
+  box-shadow: 0 6px 0 #3a1f04, 0 0 40px rgba(0,0,0,0.7),
+              inset 0 0 0 2px rgba(255,220,130,0.08);
+  scrollbar-width: thin;
+  scrollbar-color: #7a5828 #2a1a08;
+}
+
+/* Stardew-style corner icon */
+#dialog-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  min-height: 36px;
+}
+
+#dialog-text {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.35rem;
+  color: #fff8dc;
+  line-height: 1.8;
+  margin-bottom: 22px;
+  min-height: 50px;
+}
+
+.cursor-blink {
+  display: inline-block;
+  width: 9px; height: 1.1rem;
+  background: #ffe08a;
+  margin-right: 3px;
+  vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+#dialog-choices { display: flex; flex-direction: column; gap: 8px; }
+
+.choice-btn {
+  background: rgba(0,0,0,0.25);
+  border: 2px solid #7a5828;
+  border-radius: 4px;
+  color: #d4b87a;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.15rem;
+  text-align: right;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.5;
+  opacity: 0;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.choice-btn:hover {
+  background: rgba(106, 191, 80, 0.15);
+  border-color: #6abf50;
+  color: #fff8dc;
+  transform: translateX(-4px);
+}
+.choice-btn:active { background: rgba(106, 191, 80, 0.3); }
+
+@keyframes fadeIn { to { opacity: 1; } }
+
+#dialog-feedback {
+  margin-top: 14px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1rem;
+  color: #ff7070;
+  min-height: 24px;
+}
+
+/* Close button (small X) */
+#dialog-close {
+  position: absolute;
+  top: 12px; left: 14px;
+  background: rgba(0,0,0,0.3);
+  border: 2px solid #7a5828;
+  border-radius: 3px;
+  color: #8a6030;
+  width: 30px; height: 30px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+}
+#dialog-close:hover { color: #ff8888; border-color: #ff8888; }
+
+/* ─── Final Screen ─── */
+#final-screen {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, #1a2a1a, #2d1a08);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+  padding: 40px;
+}
+#final-screen.visible { opacity: 1; pointer-events: all; }
+
+.letter-container {
+  max-width: 780px;
+  text-align: center;
+}
+
+.letter-header {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 1.5rem;
+  color: #ffe08a;
+  letter-spacing: 4px;
+  margin-bottom: 36px;
+  text-shadow: 0 0 20px rgba(255,200,80,0.5);
+}
+
+#letter-text {
+  font-family: 'Amiri', 'Georgia', serif;
+  font-size: 1.3rem;
+  color: #3b2818;
+  line-height: 2.2;
+  direction: rtl;
+  background: #f4e8c1;
+  background-image: 
+    radial-gradient(circle, transparent 20%, #e0ce9a 120%),
+    url('https://www.transparenttextures.com/patterns/aged-paper.png');
+  border-radius: 2px;
+  padding: 50px 10%;
+  box-shadow: inset 0 0 50px rgba(100,60,20,0.4), 0 15px 40px rgba(0,0,0,0.8);
+  max-width: 800px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #8c6a46 transparent;
+  position: relative;
+}
+
+#letter-text::-webkit-scrollbar { width: 8px; }
+#letter-text::-webkit-scrollbar-track { background: transparent; }
+#letter-text::-webkit-scrollbar-thumb { background: rgba(140, 106, 70, 0.7); border-radius: 4px; }
+
+#letter-text em { color: #8c2a2a; font-style: italic; }

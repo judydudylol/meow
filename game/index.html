@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>متاهة جود</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas"></canvas>
+
+    <div id="crosshair">
+      <div class="ch-h"></div>
+      <div class="ch-v"></div>
+    </div>
+
+    <div id="hint-bar">انقر للتفاعل</div>
+
+    <div id="hud-inventory">
+      <span id="hud-label">الحقيبة:</span>
+      <span id="hud-items"></span>
+    </div>
+
+    <div id="start-screen">
+      <div class="start-inner">
+        <div class="start-logo">متاهة جود</div>
+        <p class="start-sub">استكشف العالم. تحدث مع الأشياء. اكشف الأسرار.</p>
+        <div class="controls-grid">
+          <div class="ctrl"><kbd>W A S D</kbd><span>للتحرك</span></div>
+          <div class="ctrl"><kbd>الفأرة</kbd><span>للنظر</span></div>
+          <div class="ctrl"><kbd>Space</kbd><span>للقفز</span></div>
+          <div class="ctrl"><kbd>انقر</kbd><span>للتفاعل</span></div>
+        </div>
+        <button id="start-btn">ابدأ اللعبة ▶</button>
+      </div>
+    </div>
+
+    <div id="dialog-overlay">
+      <div id="dialog-box">
+        <button id="dialog-close" onclick="window._closeDialog()">✕</button>
+        <div id="dialog-icon"></div>
+        <div id="dialog-text"></div>
+        <div id="dialog-choices"></div>
+        <div id="dialog-feedback"></div>
+      </div>
+    </div>
+
+    <div id="final-screen">
+      <div class="letter-container">
+        <div class="letter-header">✦ اكتملت المتاهة ✦</div>
+        <div id="letter-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
